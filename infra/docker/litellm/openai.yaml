@@ -1,0 +1,22 @@
+# LiteLLM gateway -- OpenAI. Keel talks Anthropic Messages API to the proxy;
+# the proxy translates to OpenAI. Set OPENAI_API_KEY in keel.env.
+# Keel side: ANTHROPIC_BASE_URL=http://gateway:4000  (ANTHROPIC_API_KEY holds
+# the LITELLM_MASTER_KEY -- claude -p authenticates to the gateway).
+model_list:
+  - model_name: claude-sonnet-4-5           # the name `claude -p` asks for
+    litellm_params:
+      model: openai/gpt-5              # reasoning model: claude -p sends
+                                       # reasoning.effort natively
+      api_key: os.environ/OPENAI_API_KEY
+  - model_name: claude-3-5-haiku-20241022   # cheap lane (chips/classification)
+    litellm_params:
+      model: openai/gpt-5-mini
+      api_key: os.environ/OPENAI_API_KEY
+litellm_settings:
+  drop_params: true      # strip Anthropic-only params OpenAI rejects
+  # claude -p always sends thinking/reasoning params. Non-reasoning models
+  # (gpt-4.1, llama3.1) reject them -- drop_params does NOT cover these
+  # because litellm treats them as first-class. Force-drop:
+  additional_drop_params: ["reasoning", "reasoning_effort", "thinking"]
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY

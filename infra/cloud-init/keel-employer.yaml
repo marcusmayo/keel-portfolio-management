@@ -1,0 +1,16 @@
+#cloud-config
+# Keel employer profile: NO tailnet -- reachability is the employer's
+# private network per allowedSshSourceCidr. No secrets transit this
+# file (no tailscale auth-key substitution target exists in this file, by design);
+# operator injects secrets later via infra/scripts/bootstrap.sh.
+package_update: true
+packages: [docker.io, docker-compose-v2, git, python3-qrcode]
+runcmd:
+  - set -e
+  - systemctl enable --now docker
+  - git clone '__KEEL_REPO_URL__' /home/__ADMIN_USER__/keel
+  - echo 'DEPLOY_GATEWAY=__DEPLOY_GATEWAY__' > /home/__ADMIN_USER__/keel/.provision-flags
+  - cd /home/__ADMIN_USER__/keel && ./infra/scripts/build-image.sh > /var/log/keel-image-build.log 2>&1
+  - chown -R __ADMIN_USER__:__ADMIN_USER__ /home/__ADMIN_USER__/keel
+  - "{ dpkg-query -W docker.io docker-compose-v2 git; } > /var/log/keel-provision-versions.log 2>&1"
+final_message: "keel-employer cloud-init complete after $UPTIME s -- next: SSH from allowed CIDR, run infra/scripts/bootstrap.sh"

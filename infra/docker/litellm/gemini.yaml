@@ -1,0 +1,16 @@
+# LiteLLM gateway -- Google Gemini. Keel talks Anthropic Messages API to the
+# proxy; the proxy translates to Gemini. Set GEMINI_API_KEY in keel.env.
+# Keel side: ANTHROPIC_BASE_URL=http://gateway:4000
+model_list:
+  - model_name: claude-sonnet-4-5           # the name `claude -p` asks for
+    litellm_params:
+      model: gemini/gemini-flash-latest       # tracks Google's current flash
+      api_key: os.environ/GEMINI_API_KEY
+  - model_name: claude-3-5-haiku-20241022   # cheap lane (chips/classification)
+    litellm_params:
+      model: gemini/gemini-flash-lite-latest  # cheap lane
+      api_key: os.environ/GEMINI_API_KEY
+litellm_settings:
+  drop_params: true      # tolerate Anthropic-only params Gemini lacks
+general_settings:
+  master_key: os.environ/LITELLM_MASTER_KEY

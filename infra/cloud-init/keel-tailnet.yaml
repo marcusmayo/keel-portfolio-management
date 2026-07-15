@@ -1,0 +1,21 @@
+#cloud-config
+# Keel personal profile: joins the operator's tailnet. Placeholders
+# (double-underscore tokens) are injected by vm.bicep at deploy time. The pre-auth key is
+# single-use/short-expiry and scrubbed below; all other secrets are
+# operator-injected later by infra/scripts/bootstrap.sh over SSH.
+package_update: true
+packages: [docker.io, docker-compose-v2, git, python3-qrcode]
+runcmd:
+  - set -e
+  - curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/noble.noarmor.gpg -o /usr/share/keyrings/tailscale-archive-keyring.gpg
+  - curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/noble.tailscale-keyring.list -o /etc/apt/sources.list.d/tailscale.list
+  - apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y tailscale
+  - tailscale up --authkey '__TAILSCALE_AUTH_KEY__' --hostname keel-vm
+  - grep -rl 'tskey-' /var/lib/cloud/ /var/lib/waagent/ 2>/dev/null | xargs -r sed -i 's/tskey-[A-Za-z0-9-]*/TSKEY-SCRUBBED/g'
+  - systemctl enable --now docker
+  - git clone '__KEEL_REPO_URL__' /home/__ADMIN_USER__/keel
+  - echo 'DEPLOY_GATEWAY=__DEPLOY_GATEWAY__' > /home/__ADMIN_USER__/keel/.provision-flags
+  - cd /home/__ADMIN_USER__/keel && ./infra/scripts/build-image.sh > /var/log/keel-image-build.log 2>&1
+  - chown -R __ADMIN_USER__:__ADMIN_USER__ /home/__ADMIN_USER__/keel
+  - "{ dpkg-query -W docker.io docker-compose-v2 git tailscale; tailscale ip -4; } > /var/log/keel-provision-versions.log 2>&1"
+final_message: "keel-tailnet cloud-init complete after $UPTIME s -- next: SSH over tailnet, run infra/scripts/bootstrap.sh"

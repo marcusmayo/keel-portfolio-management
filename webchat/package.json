@@ -1,0 +1,24 @@
+{
+  "name": "webchat",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "js-yaml": "^5.0.0",
+    "mammoth": "^1.12.0",
+    "multer": "^2.2.0",
+    "qrcode": "^1.5.4",
+    "speakeasy": "^2.0.0",
+    "ws": "^8.21.0",
+    "xlsx": "^0.18.5"
+  }
+}

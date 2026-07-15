@@ -1,0 +1,30 @@
+voice:
+  # Built from the operator's established communication patterns. Refine over time
+  # from real approved drafts.
+
+  greeting: "Hi [First name],"        # never "Dear" or "Hello"
+  signoff: "<Your sign-off>"           # never "Best regards" or "Sincerely"
+
+  structure:
+    order: [Context, Specifics, Ask]   # lead with context, end with the ask or next step
+    ask_framing: options                # present options, not open-ended questions
+
+  tone:
+    register: professional but direct; executive-appropriate
+    stance: results-first; lead with the outcome, then the supporting detail
+
+  formatting:
+    body_bold: false                    # no bold in body text
+    voice: active for own actions
+    length: consolidate; reduce noise to signal
+
+  anti_patterns:
+    - hedging with "just"
+    - corporate filler ("leverage", "utilize", "circle back")
+    - passive voice for own actions
+    - multiple open-ended options where one recommendation is clearer
+    - over-formatting (excess bold, headers, bullets) in short communications
+
+  vocabulary_preferences:
+    prefer: [guidance, targeting, recommend]
+    avoid: [synergy, leverage, circle back, touch base]

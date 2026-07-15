@@ -1,0 +1,44 @@
+# Keel self-contained deployment. Requires keel.env alongside (gitignored):
+#   TOTP_SECRET=...          # real secret on real deploys; scratch for smoke
+#   ANTHROPIC_API_KEY=...    # omit if only smoke-testing
+name: keel
+services:
+  webchat:
+    image: keel:latest
+    container_name: keel-webchat
+    env_file: [keel.env]
+    environment:
+      KEEL_BIND: 0.0.0.0        # container netns; host exposure is the ports: line
+      KEEL_DIR: /app
+      HOME: /home/keel          # claude CLI config dir
+    ports:
+      - "${KEEL_PUBLISH_ADDR:-127.0.0.1}:${KEEL_PUBLISH_PORT:-8443}:8443"
+    volumes:                    # image = code; state = volumes (literal split)
+      - keel-state:/app/state
+      - keel-knowledge:/app/knowledge
+      - keel-logs:/app/logs
+      - keel-support:/app/support
+    restart: unless-stopped
+  gateway:
+    # OPTIONAL: `docker compose --profile gateway up -d`
+    # Official image, digest-pinned (see infra/versions.lock for the vetting
+    # record). Never pip-installed. Choose a provider config via LITELLM_CONFIG.
+    profiles: ["gateway"]
+    image: ghcr.io/berriai/litellm@sha256:9ef6f45bc0104940571765e610c52a1d761b5ec85efcd193795281086ee61277
+    container_name: keel-gateway
+    env_file: [keel.env]
+    command: ["--config", "/cfg/${LITELLM_CONFIG:-gemini.yaml}", "--port", "4000"]
+    volumes:
+      - ./litellm:/cfg:ro
+    extra_hosts:
+      # Linux: host.docker.internal is not provided by default. Needed for
+      # the ollama config (host-run model server). Harmless otherwise.
+      - "host.docker.internal:host-gateway"
+    # no host port: reachable only from the compose network (webchat -> gateway)
+    restart: unless-stopped
+
+volumes:
+  keel-state:
+  keel-knowledge:
+  keel-logs:
+  keel-support:

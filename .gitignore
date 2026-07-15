@@ -1,0 +1,40 @@
+# Sensitive — never commit
+gate/never-egress.json
+logs/
+*.key
+*.pem
+.env
+.env.*
+*.age
+
+# Node
+node_modules/
+npm-debug.log
+
+# Local scratch
+*.tmp
+webchat/service.env
+
+# Raw uploaded images — kept on the VM per OCR-gate design, never pushed off-box
+webchat/img-stash/
+
+# Editor backup copies
+webchat/*.bak*
+*.bak*
+# Digest runtime artifacts (machine-specific state, not code)
+state/daily-digests/
+logs/digest-cron.log
+# Rollback backups (full-file copies, kept locally only)
+*.pre-*
+backups/
+exports/
+knowledge/import/
+state/normalized/
+tools/_tmp*
+state/_*_tmp*.py
+tools/__pycache__/
+
+# audit trail: versioned provenance exception to logs/ ignore
+!logs/audit.jsonl
+
+infra/docker/keel.env

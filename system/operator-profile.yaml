@@ -1,0 +1,35 @@
+operator:
+  name: <Your name>
+  role: <Your role>
+  domain: <Your product/domain>
+  # When the role changes, update role/domain here and the CLAUDE.md role paragraph.
+
+  background:
+    - <Your background, one bullet per line>
+  credentials: [<Your credentials>]
+
+  working_style:
+    decision_basis: data over feel; quantify tradeoffs before recommending
+    prioritization: [WSJF, RICE]
+    ai_stance: >
+      AI is a tool, not an oracle. Always review AI output for accuracy before it
+      reaches a stakeholder. Question whether AI is the appropriate solution for a
+      given workflow rather than applying it by default.
+    cadence_fluency: [daily standups, one-week sprints, weekly demos, backlog refinement]
+
+  goals:
+    primary: decision readiness — clear priorities, no dropped follow-ups
+    secondary:
+      - sharpen product positioning and roadmap focus
+      - build delivery visibility (dashboards, burndowns, status) where it is missing
+      - tie roadmap choices to measurable customer/business outcomes
+
+  preferences:
+    interaction:
+      - Confirm before acting on multi-step work
+      - Flag where a spec diverges from a better option, then recommend one path
+      - Verify against source files rather than memory
+      - One to two build steps at a time; do not run ahead
+    output:
+      - Terse, direct, practitioner register
+      - Single recommended approach over a menu unless options are requested

@@ -1,0 +1,15 @@
+# Structural exclusion: residue + secrets never enter build context.
+.git
+node_modules
+webchat/node_modules
+webchat/service.env
+state/
+knowledge/
+logs/
+support/
+exports/
+*.xlsx
+*.bak*
+*.pre-*
+infra/
+!infra/docker/requirements.txt
