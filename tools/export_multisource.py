@@ -167,6 +167,7 @@ def main():
     def status_classes(assertions, tag):
         return set(canon_status(a[4]) for a in assertions if a[0] == tag and a[4])
     r = 1
+    _disagree_keys = []
     ordered_items = list(both.items()) + [(k, v) for k, v in merged.items() if k not in both]
     for kk, v in ordered_items:
         r += 1
@@ -177,6 +178,7 @@ def main():
         jc = status_classes(v["assertions"], "JIRA")
         # disagree only when both sources assert AND share no canonical class
         disagree = "YES" if (bc and jc and not (bc & jc)) else ""
+        if disagree: _disagree_keys.append(kk)
         vals = [kk, jira_key(kk), v["keel_name"], v["keel_status"], keel_origin(kk),
                 b_str, j_str, srcs, disagree] + list(score3(kk))
         for c, val in enumerate(vals, 1):
@@ -347,8 +349,9 @@ def main():
     wsS.auto_filter.ref = f"A1:G{srow}"
     # Decision column (G) confirm/reject dropdown -- minimal validation.
     _dv = DataValidation(type="list", formula1='"confirm,reject"', allow_blank=True)
-    wsU.add_data_validation(_dv)
-    _dv.add(f"G2:G{urow}")
+    if urow >= 2:
+        wsU.add_data_validation(_dv)
+        _dv.add(f"G2:G{urow}")  # zero data rows: header-only sheet is legal, DV range is not
 
     # Legend sheet -- appended last; has no Key/Description columns so the
     # round-trip apply tool (find_sheet_and_cols) can never select it.
@@ -397,9 +400,7 @@ def main():
     wsL.column_dimensions["A"].width = 14
     wsL.column_dimensions["B"].width = 95
     wb.save(out)
-    disagreements = sum(1 for kk, v in both.items()
-                        if set(a[1] for a in v["assertions"] if a[0]=="BACKLOG")
-                        != set(a[1] for a in v["assertions"] if a[0]=="JIRA"))
+    disagreements = len(_disagree_keys)  # same computation as the rows -- one truth
     print(f"\nwrote {out}  (cross-source={len(merged)}  both={len(both)}  disagree={disagreements}  source-only={len(source_only)}  keel-origin={len([k for k,o in (_ORIGIN_INDEX or {}).items() if o=='keel-origin'])})")
 
 if __name__ == "__main__":

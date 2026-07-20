@@ -30,12 +30,14 @@ STATUS_MAP = {
 }
 TYPE_VOCAB = {"epic", "feature", "story"}
 def _load_source_prefix():
-    """SOURCE_KEY_PREFIX from keel.config.json; None if absent/unset.
+    """SOURCE_KEY_PREFIX from $KEEL_CONFIG if set, else keel.config.json at the repo root; None if absent/unset.
     Free-text key scanning needs a declared prefix (generic [A-Z]+-\\d+
     would false-positive on ISO-9001-style tokens)."""
     import json as _json
     from pathlib import Path as _P
-    cfg = _P(__file__).resolve().parent.parent / "keel.config.json"
+    import os as _os
+    _envcfg = _os.environ.get("KEEL_CONFIG")
+    cfg = _P(_envcfg) if _envcfg else _P(__file__).resolve().parent.parent / "keel.config.json"
     try:
         return (_json.loads(cfg.read_text(encoding="utf-8")).get("SOURCE_KEY_PREFIX") or None)
     except Exception:

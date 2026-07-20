@@ -559,6 +559,28 @@ app.get('/run-reconcile-semantic', requireAuth, (req, res) => {
   }
 });
 
+// Full Northwind E2E demo (DESTRUCTIVE to demo state; confirm-gated). README-only -- no chip.
+app.get('/run-e2e', requireAuth, (req, res) => {
+  if ((req.query.confirm || '') !== '1') {
+    return res.json({ ok: true, output:
+      'RUN-E2E -- full pipeline demo on SYNTHETIC Northwind example data.\n' +
+      'DESTRUCTIVE: regenerates the demo corpus, OVERWRITES keel.config.json\n' +
+      '(SOURCE_KEY_PREFIX=NWR), reseeds knowledge/import/raw/, and drafts 25 demo\n' +
+      'items into state/. Do NOT run on a deployment holding real data.\n' +
+      'Suggested use: run once on a FRESH deployment before loading real data.\n' +
+      'Step 9 calls the LLM: ~30-60s (cloud), seconds (local GPU), several\n' +
+      'minutes (local CPU). The chat will wait -- do not resend.\n\n' +
+      'To proceed, type: /run-e2e confirm' });
+  }
+  try {
+    const out = execFileSync('bash', ['run_e2e.sh', '--yes'],
+                  { cwd: KEEL_DIR, encoding: 'utf8', timeout: 900000, maxBuffer: 10 * 1024 * 1024 });
+    res.json({ ok: true, output: out });
+  } catch (e) {
+    res.json({ ok: false, output: (e.stdout || '') + (e.stderr || '') + String(e) });
+  }
+});
+
 // Merge-confirm: accept/reject/distinct keel-origin merge proposals -> resolutions.json
 app.get('/run-merge', requireAuth, (req, res) => {
   try {

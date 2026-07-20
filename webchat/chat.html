@@ -201,7 +201,24 @@
       }).catch(e=>addMsg('merge-distinct failed: '+e,'err'));
       return;
     }
-    if (text === '/reconcile-semantic') {
+    if (text === '/run-e2e') {
+        input.value = '';
+        addMsg('/run-e2e', 'me');
+        fetch('/run-e2e').then(r => r.json()).then(d => {
+          addMsg(d.output || '(no output)', d.ok ? 'sys' : 'err');
+        }).catch(e => addMsg('run-e2e failed: ' + e, 'err'));
+        return;
+      }
+      if (text === '/run-e2e confirm') {
+        input.value = '';
+        addMsg('/run-e2e confirm', 'me');
+        addMsg('Running FULL E2E demo on synthetic data\u2026 (step 9 waits on the LLM: ~30-60s cloud / seconds GPU / minutes CPU -- do not resend)', 'sys');
+        fetch('/run-e2e?confirm=1').then(r => r.json()).then(d => {
+          addMsg(d.output || '(no output)', d.ok ? 'sys' : 'err');
+        }).catch(e => addMsg('run-e2e failed: ' + e, 'err'));
+        return;
+      }
+      if (text === '/reconcile-semantic') {
       input.value = '';
       addMsg('/reconcile-semantic', 'me');
       addMsg('LLM judging ambiguous pairs\u2026 (slow, ~30-60s, no writes to portfolio)', 'sys');

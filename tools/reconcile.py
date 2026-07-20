@@ -164,9 +164,10 @@ def main():
             same_type = (row.get("type") == best["type"]) or row.get("type") == "unknown"
             src_done  = rstat in SRC_DONE
             keel_done = best["status"] in KEEL_DONE
+            _mode = "ref" if (rref and rref == best.get("ref")) else "title"
             entry = {**rowbase, "keel_key": best["key"], "keel_name": best["name"],
                      "keel_status": best["status"], "wsjf": best["wsjf"],
-                     "rice": best["rice"], "score": round(best_score, 2)}
+                     "rice": best["rice"], "score": round(best_score, 2), "match_mode": _mode}
             if not same_type and rref and rref == best.get("ref"):
                 # same item (exact ref), types disagree -> align Keel to Jira (source of record)
                 entry.update(verdict="conflict",
@@ -187,7 +188,7 @@ def main():
                 buckets["completed"].append(entry)
             else:
                 entry.update(verdict="changed",
-                             reason="title/ref match; review for field diffs",
+                             reason=("exact source-key match; review for field diffs" if _mode == "ref" else "title-overlap match, no source key; review for field diffs"),
                              action="review/link")
                 buckets["changed"].append(entry)
         elif best and best_score >= LOW:

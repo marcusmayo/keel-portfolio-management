@@ -38,3 +38,8 @@ tools/__pycache__/
 !logs/audit.jsonl
 
 infra/docker/keel.env
+.provision-flags
+examples/northwind/__pycache__/
+examples/northwind/expectations.json
+state/weekly-reports/.ready-*
+knowledge/people/
