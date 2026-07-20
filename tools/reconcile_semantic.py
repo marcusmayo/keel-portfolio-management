@@ -106,7 +106,7 @@ def main():
         proc = subprocess.run(["claude", "-p", prompt], cwd=td,
                               capture_output=True, text=True, timeout=240)
     if proc.returncode != 0:
-        print(f"claude -p exit {proc.returncode}\nstderr: {proc.stderr[:500]}"); sys.exit(1)
+        print(f"claude -p exit {proc.returncode}\nstderr: {proc.stderr[:400]}\nstdout: {proc.stdout[:400]}"); sys.exit(1)
     try:
         verdicts = extract_json(proc.stdout)
     except Exception as ex:
