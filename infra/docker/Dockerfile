@@ -49,6 +49,11 @@ COPY webchat/ /app/webchat/
 COPY system/ /app/system/
 COPY keel.config.json CLAUDE.md /app/
 
+# Demo harness (synthetic Northwind generator + one-command runner + reset).
+# Baked in so a stranger can run `docker exec <container> bash run_e2e.sh --yes` with no clone mount.
+COPY examples/ /app/examples/
+COPY run_e2e.sh clean_demo.sh /app/
+
 # Runtime state mount points, writable by keel whether or not volumes mount.
 RUN mkdir -p /app/state /app/knowledge /app/logs /app/support \
     && chown -R keel:keel /app
