@@ -21,6 +21,19 @@
 
 set -uo pipefail
 
+# Guard: this pipeline runs INSIDE the keel container, where the Python deps
+# (openpyxl, PyYAML) and the claude CLI resolve. On the host it hits the bare
+# system python3 and fails with a misleading "No module named openpyxl". Detect
+# the host case and print the correct invocation instead of failing opaquely.
+if [ ! -f /.dockerenv ] && [ "${KEEL_DIR:-}" != "/app" ]; then
+  echo "ERROR: run_e2e.sh must run INSIDE the keel container, not on the host." >&2
+  echo "  It needs the container's Python env (openpyxl, PyYAML) and the claude CLI;" >&2
+  echo "  on the host you'll see a misleading 'No module named openpyxl'." >&2
+  echo "  Run it like this:" >&2
+  echo "    docker exec -w /app keel-webchat bash run_e2e.sh --yes" >&2
+  exit 2
+fi
+
 STEP=0
 run_step () {
   STEP=$((STEP+1))
