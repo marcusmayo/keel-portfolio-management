@@ -266,3 +266,5 @@ and VM reboots. It is destroyed only by `docker compose down -v`, an explicit
 
 Apache-2.0. Author: Marcus Mayo -- X: [@MarcusMayoAI](https://x.com/MarcusMayoAI)
 -- GitHub: [marcusmayo](https://github.com/marcusmayo)
+-- LinkedIn: [marcusmayo](https://www.linkedin.com/in/marcusmayo/)
+
